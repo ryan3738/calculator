@@ -1,6 +1,6 @@
 const display = document.querySelector('#display')
 const allClearButton = document.querySelector('#allClearButton')
-const plusMinusButton = document.querySelector('#plusMinusButton')
+const deleteButton = document.querySelector('#deleteButton')
 const percentButton = document.querySelector('#percentButton')
 const divideButton = document.querySelector('#divideButton')
 const multiplyButton = document.querySelector('#multiplyButton')
@@ -50,8 +50,8 @@ const divide = function (x, y) {
 const power = function (x, y) {
     return Number(x) ** Number(y)
 }
-const percent = function (x, y) {
-    return x ** y
+const percent = function (x) {
+    return Number(x) / 100
 }
 
 //Create function that populates display with buttons that are pressed
@@ -66,10 +66,13 @@ function updateDisplay(value) {
 function operateCleanup() {
     operand1.length = 0
     operand2.length = 0
-    operand1.push(result)
+    const resultArray = String(result).split('')
+    operand1.push(...resultArray)
     operator = null
     displayArray.length = 0
-    updateDisplay(operand1)
+    operand1.forEach((digit)=>{
+        updateDisplay(digit)
+    })
 }
 
 function operate(){
@@ -80,19 +83,35 @@ function operate(){
 if (operator === '+'){
     result  = add(operand1.join(''), operand2.join(''))
     operateCleanup()
+    return
 }
 if (operator === '-'){
     result  = subtract(operand1.join(''), operand2.join(''))
     operateCleanup()
+    return
 }
 if (operator === '*'){
     result  = multiply(operand1.join(''), operand2.join(''))
     operateCleanup()
+    return
 }
 if (operator === '/'){
     result  = divide(operand1.join(''), operand2.join(''))
     operateCleanup()
+    return
 }
+}
+
+function makePercent() {
+    if(operand1.length > 0){
+        operator = this.value
+        result = percent(operand1.join(''))
+        operateCleanup()
+    }
+}
+
+function makedelete() {
+
 }
 
 function addOperand() {
@@ -100,16 +119,12 @@ function addOperand() {
         value = this.value
         operand2.push(value)
         updateDisplay(value)
-        // displayArray.push(value)
-        // display.innerHTML = displayArray.join('')
         return
     }
-    if (operator === null) {
+    if (operator === null && result === null) {
         value=this.value
         operand1.push(value)
         updateDisplay(value)
-        // displayArray.push(value)
-        // display.innerHTML = displayArray.join('')
         return
     }
 
@@ -129,8 +144,6 @@ function addOperator() {
         operate()
         operator = this.value
         updateDisplay(operator)
-        // displayArray.push(operator)
-        // display.innerHTML = displayArray.join('')
         return
     }
     if (operator !== null){
@@ -143,21 +156,19 @@ function addOperator() {
     if(operator === null){
         operator = this.value
         updateDisplay(operator)
-        // displayArray.push(operator)
-        // display.innerHTML = displayArray.join('')
         return
     }
 }
 
 // display.addEventListener('click', )
 allClearButton.addEventListener('click', clearAll)
-// plusMinusButton.addEventListener('click', )
-// percentButton.addEventListener('click', )
+// deleteButton.addEventListener('click', deleteOperand)
+percentButton.addEventListener('click', makePercent)
 divideButton.addEventListener('click', addOperator)
 multiplyButton.addEventListener('click', addOperator)
 subtractButton.addEventListener('click', addOperator)
 addButton.addEventListener('click', addOperator)
-// decimalButton.addEventListener('click', )
+decimalButton.addEventListener('click', addOperand)
 equalButton.addEventListener('click', operate)
 zeroButton.addEventListener('click', addOperand)
 oneButton.addEventListener('click', addOperand)
